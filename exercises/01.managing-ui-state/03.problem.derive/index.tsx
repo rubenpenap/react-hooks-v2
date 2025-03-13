@@ -4,17 +4,13 @@ import { generateGradient, getMatchingPosts } from '#shared/blog-posts'
 
 function App() {
 	const [query, setQuery] = useState('')
-	// 🐨 move the words variable from handleCheck to here
-	// 🦉 this is deriving state!
-
-	// 🐨 create a dogChecked variable that is whether words includes "dog"
-	// and do the same for "cat" and "caterpillar"
-	// 🦉 this is deriving state from derived state!
+	const words = query.split(' ')
+	const dogChecked = words.includes('dog')
+	const catChecked = words.includes('cat')
+	const caterpillarChecked = words.includes('caterpillar')
 
 	function handleCheck(tag: string, checked: boolean) {
-		// 🐨 move the words variable up to just below the useState call
-		const words = query.split(' ')
-		const newWords = checked ? [...words, tag] : words.filter(w => w !== tag)
+		const newWords = checked ? [...words, tag] : words.filter((w) => w !== tag)
 		setQuery(newWords.filter(Boolean).join(' ').trim())
 	}
 
@@ -28,31 +24,31 @@ function App() {
 						name="query"
 						type="search"
 						value={query}
-						onChange={e => setQuery(e.currentTarget.value)}
+						onChange={(e) => setQuery(e.currentTarget.value)}
 					/>
 				</div>
 				<div>
 					<label>
 						<input
 							type="checkbox"
-							// 🐨 control the checked state of this checkbox by setting the checked prop
-							onChange={e => handleCheck('dog', e.currentTarget.checked)}
+							checked={dogChecked}
+							onChange={(e) => handleCheck('dog', e.currentTarget.checked)}
 						/>{' '}
 						🐶 dog
 					</label>
 					<label>
 						<input
 							type="checkbox"
-							// 🐨 control the checked state of this checkbox by setting the checked prop
-							onChange={e => handleCheck('cat', e.currentTarget.checked)}
+							checked={catChecked}
+							onChange={(e) => handleCheck('cat', e.currentTarget.checked)}
 						/>{' '}
 						🐱 cat
 					</label>
 					<label>
 						<input
 							type="checkbox"
-							// 🐨 control the checked state of this checkbox by setting the checked prop
-							onChange={e =>
+							checked={caterpillarChecked}
+							onChange={(e) =>
 								handleCheck('caterpillar', e.currentTarget.checked)
 							}
 						/>{' '}
@@ -71,7 +67,7 @@ function MatchingPosts({ query }: { query: string }) {
 
 	return (
 		<ul className="post-list">
-			{matchingPosts.map(post => (
+			{matchingPosts.map((post) => (
 				<li key={post.id}>
 					<div
 						className="post-image"
@@ -79,7 +75,7 @@ function MatchingPosts({ query }: { query: string }) {
 					/>
 					<a
 						href={post.id}
-						onClick={event => {
+						onClick={(event) => {
 							event.preventDefault()
 							alert(`Great! Let's go to ${post.id}!`)
 						}}
