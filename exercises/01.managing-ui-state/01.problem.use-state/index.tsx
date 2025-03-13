@@ -1,8 +1,9 @@
+import { useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import { generateGradient, getMatchingPosts } from '#shared/blog-posts'
 
 function App() {
-	// 🐨 call useState here and initialize the query with an empty string
+	const [query, setQuery] = useState('')
 
 	return (
 		<div className="app">
@@ -13,7 +14,9 @@ function App() {
 						id="searchInput"
 						name="query"
 						type="search"
-						// 🐨 add an onChange handler here that calls setQuery with the event.currentTarget.value
+						onChange={(event) => {
+							setQuery(event.currentTarget.value)
+						}}
 					/>
 				</div>
 				<div>
@@ -29,8 +32,7 @@ function App() {
 				</div>
 				<button type="submit">Submit</button>
 			</form>
-			{/* 🐨 pass the query state as a prop */}
-			<MatchingPosts query="" />
+			<MatchingPosts query={query} />
 		</div>
 	)
 }
@@ -40,7 +42,7 @@ function MatchingPosts({ query }: { query: string }) {
 
 	return (
 		<ul className="post-list">
-			{matchingPosts.map(post => (
+			{matchingPosts.map((post) => (
 				<li key={post.id}>
 					<div
 						className="post-image"
@@ -48,7 +50,7 @@ function MatchingPosts({ query }: { query: string }) {
 					/>
 					<a
 						href={post.id}
-						onClick={event => {
+						onClick={(event) => {
 							event.preventDefault()
 							alert(`Great! Let's go to ${post.id}!`)
 						}}
