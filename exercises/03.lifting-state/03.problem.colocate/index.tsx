@@ -34,18 +34,18 @@ function App() {
 function Form({
 	query,
 	setQuery,
-}: {
+}: Readonly<{
 	query: string
 	setQuery: (query: string) => void
-}) {
-	const words = query.split(' ').map(w => w.trim())
+}>) {
+	const words = query.split(' ').map((w) => w.trim())
 
 	const dogChecked = words.includes('dog')
 	const catChecked = words.includes('cat')
 	const caterpillarChecked = words.includes('caterpillar')
 
 	function handleCheck(tag: string, checked: boolean) {
-		const newWords = checked ? [...words, tag] : words.filter(w => w !== tag)
+		const newWords = checked ? [...words, tag] : words.filter((w) => w !== tag)
 		setQuery(newWords.filter(Boolean).join(' ').trim())
 	}
 
@@ -62,7 +62,7 @@ function Form({
 					name="query"
 					type="search"
 					value={query}
-					onChange={e => setQuery(e.currentTarget.value)}
+					onChange={(e) => setQuery(e.currentTarget.value)}
 				/>
 			</div>
 			<div>
@@ -70,7 +70,7 @@ function Form({
 					<input
 						type="checkbox"
 						checked={dogChecked}
-						onChange={e => handleCheck('dog', e.currentTarget.checked)}
+						onChange={(e) => handleCheck('dog', e.currentTarget.checked)}
 					/>{' '}
 					🐶 dog
 				</label>
@@ -78,7 +78,7 @@ function Form({
 					<input
 						type="checkbox"
 						checked={catChecked}
-						onChange={e => handleCheck('cat', e.currentTarget.checked)}
+						onChange={(e) => handleCheck('cat', e.currentTarget.checked)}
 					/>{' '}
 					🐱 cat
 				</label>
@@ -86,7 +86,9 @@ function Form({
 					<input
 						type="checkbox"
 						checked={caterpillarChecked}
-						onChange={e => handleCheck('caterpillar', e.currentTarget.checked)}
+						onChange={(e) =>
+							handleCheck('caterpillar', e.currentTarget.checked)
+						}
 					/>{' '}
 					🐛 caterpillar
 				</label>
@@ -98,55 +100,29 @@ function Form({
 
 function MatchingPosts({ query }: { query: string }) {
 	const matchingPosts = getMatchingPosts(query)
-	// 🐨 colocate this state back to the Card
-	const [favorites, setFavorites] = useState<Array<string>>([])
 
 	return (
 		<ul className="post-list">
-			{matchingPosts.map(post => (
-				<Card
-					key={post.id}
-					post={post}
-					// 💣 remove isFavorited
-					isFavorited={favorites.includes(post.id)}
-					// 💣 remove onFavoriteClick
-					onFavoriteClick={favorite => {
-						if (favorite) {
-							setFavorites([...favorites, post.id])
-						} else {
-							setFavorites(favorites.filter(fav => fav !== post.id))
-						}
-					}}
-				/>
+			{matchingPosts.map((post) => (
+				<Card key={post.id} post={post} />
 			))}
 		</ul>
 	)
 }
 
-// 💣 remove the isFavorited and onFavoriteClick
-function Card({
-	post,
-	isFavorited,
-	onFavoriteClick,
-}: {
-	post: BlogPost
-	isFavorited: boolean
-	onFavoriteClick: (isFavorited: boolean) => void
-}) {
-	// 🐨 colocate the isFavorited state to here
+function Card({ post }: Readonly<{ post: BlogPost }>) {
+	const [isFavorited, setIsFavorited] = useState(false)
 	return (
 		<li>
 			{isFavorited ? (
 				<button
 					aria-label="Remove favorite"
-					// 🐨 call setIsFavorited
-					onClick={() => onFavoriteClick(false)}
+					onClick={() => setIsFavorited(false)}
 				>
 					❤️
 				</button>
 			) : (
-				// 🐨 call setIsFavorited
-				<button aria-label="Add favorite" onClick={() => onFavoriteClick(true)}>
+				<button aria-label="Add favorite" onClick={() => setIsFavorited(true)}>
 					🤍
 				</button>
 			)}
@@ -156,7 +132,7 @@ function Card({
 			/>
 			<a
 				href={post.id}
-				onClick={event => {
+				onClick={(event) => {
 					event.preventDefault()
 					alert(`Great! Let's go to ${post.id}!`)
 				}}
