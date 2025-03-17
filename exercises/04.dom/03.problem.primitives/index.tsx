@@ -21,21 +21,18 @@ function Tilt({
 }) {
 	const tiltRef = useRef<HTMLVanillaTiltElement>(null)
 
-	// 🐨 move this into the useEffect directly
-	const vanillaTiltOptions = {
-		max,
-		speed,
-		glare,
-		'max-glare': maxGlare,
-	}
-
 	useEffect(() => {
 		const { current: tiltNode } = tiltRef
 		if (!tiltNode) return
+		const vanillaTiltOptions = {
+			max,
+			speed,
+			glare,
+			'max-glare': maxGlare,
+		}
 		VanillaTilt.init(tiltNode, vanillaTiltOptions)
 		return () => tiltNode.vanillaTilt?.destroy()
-		// 🐨 instead of passing the options object here, pass each primitive option
-	}, [vanillaTiltOptions])
+	}, [glare, max, maxGlare, speed])
 
 	return (
 		<div ref={tiltRef} className="tilt-root">
@@ -55,12 +52,12 @@ function App() {
 	})
 	return (
 		<div>
-			<button onClick={() => setShowTilt(s => !s)}>Toggle Visibility</button>
+			<button onClick={() => setShowTilt((s) => !s)}>Toggle Visibility</button>
 			{showTilt ? (
 				<div className="app">
 					<form
-						onSubmit={e => e.preventDefault()}
-						onChange={event => {
+						onSubmit={(e) => e.preventDefault()}
+						onChange={(event) => {
 							const formData = new FormData(event.currentTarget)
 							setOptions({
 								max: Number(formData.get('max')),
@@ -99,7 +96,7 @@ function App() {
 						<div className="totally-centered">
 							<button
 								className="count-button"
-								onClick={() => setCount(c => c + 1)}
+								onClick={() => setCount((c) => c + 1)}
 							>
 								{count}
 							</button>
@@ -114,10 +111,3 @@ function App() {
 const rootEl = document.createElement('div')
 document.body.append(rootEl)
 createRoot(rootEl).render(<App />)
-
-// 🤫 we'll fix this in this step!
-// (ALMOST) NEVER DISABLE THIS LINT RULE IN REAL LIFE!
-/*
-eslint
-	react-hooks/exhaustive-deps: "off",
-*/
