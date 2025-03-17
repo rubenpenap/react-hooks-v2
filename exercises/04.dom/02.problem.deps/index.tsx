@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import VanillaTilt from 'vanilla-tilt'
 
@@ -12,15 +12,14 @@ function Tilt({
 	speed = 400,
 	glare = true,
 	maxGlare = 0.5,
-}: {
+}: Readonly<{
 	children: React.ReactNode
 	max?: number
 	speed?: number
 	glare?: boolean
 	maxGlare?: number
-}) {
-	// 🐨 create a tiltRef here with useRef (initialize it to null)
-	// 🦺 you can pass HTMLVanillaTiltElement to the generic type
+}>) {
+	const tiltRef = useRef<HTMLVanillaTiltElement>(null)
 
 	const vanillaTiltOptions = {
 		max,
@@ -29,24 +28,14 @@ function Tilt({
 		'max-glare': maxGlare,
 	}
 
-	// 🐨 create a useEffect callback here and refactor things to move the contents
-	// of the ref callback to here.
-	// 💰 You'll get the tiltNode from tiltRef.current
-	// 💰 you'll want to keep the early return if the tiltNode is null
-	// 💰 make sure to include the vanillaTiltOptions object in the dependency array
+	useEffect(() => {
+		if (!tiltRef.current) return
+		VanillaTilt.init(tiltRef.current, vanillaTiltOptions)
+		return () => tiltRef.current?.vanillaTilt?.destroy()
+	}, [])
 
 	return (
-		<div
-			className="tilt-root"
-			// 🐨 replace the contents of this ref prop with a reference to tiltRef
-			// 💰 ref={tiltRef}
-			ref={(tiltNode: HTMLVanillaTiltElement) => {
-				// 🐨 move all of this to the useEffect callback
-				if (!tiltNode) return
-				VanillaTilt.init(tiltNode, vanillaTiltOptions)
-				return () => tiltNode.vanillaTilt?.destroy()
-			}}
-		>
+		<div className="tilt-root" ref={tiltRef}>
 			<div className="tilt-child">{children}</div>
 		</div>
 	)
@@ -63,12 +52,12 @@ function App() {
 	})
 	return (
 		<div>
-			<button onClick={() => setShowTilt(s => !s)}>Toggle Visibility</button>
+			<button onClick={() => setShowTilt((s) => !s)}>Toggle Visibility</button>
 			{showTilt ? (
 				<div className="app">
 					<form
-						onSubmit={e => e.preventDefault()}
-						onChange={event => {
+						onSubmit={(e) => e.preventDefault()}
+						onChange={(event) => {
 							const formData = new FormData(event.currentTarget)
 							setOptions({
 								max: Number(formData.get('max')),
@@ -88,7 +77,7 @@ function App() {
 						</div>
 						<div>
 							<label>
-								<input id="glare" name="glare" type="checkbox" defaultChecked />
+								<input id="glare" name="glare" type="checkbox" defaultChecked />{' '}
 								Glare
 							</label>
 						</div>
@@ -107,7 +96,7 @@ function App() {
 						<div className="totally-centered">
 							<button
 								className="count-button"
-								onClick={() => setCount(c => c + 1)}
+								onClick={() => setCount((c) => c + 1)}
 							>
 								{count}
 							</button>
