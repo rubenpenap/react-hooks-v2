@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { createRoot } from 'react-dom/client'
 import VanillaTilt from 'vanilla-tilt'
 
@@ -8,14 +8,12 @@ function Field({
 }: {
 	label: string
 } & React.ComponentProps<'input'>) {
-	// 🐨 create a generatedId using useId
-	// 🐨 create an id that defaults to inputProps.id and falls back to the generatedId
+	const generatedId = useId()
+	const id = inputProps.id ?? generatedId
 	return (
 		<div>
-			{/* 🐨 add htmlFor on the label and set it to the id */}
-			<label>{label}</label>
-			{/* 🐨 add an id prop here */}
-			<input {...inputProps} />
+			<label htmlFor={id}>{label}</label>
+			<input {...inputProps} id={id} />
 		</div>
 	)
 }
@@ -70,8 +68,8 @@ function App() {
 	return (
 		<div className="app">
 			<form
-				onSubmit={e => e.preventDefault()}
-				onChange={event => {
+				onSubmit={(e) => e.preventDefault()}
+				onChange={(event) => {
 					const formData = new FormData(event.currentTarget)
 					setOptions({
 						max: Number(formData.get('max')),
@@ -99,7 +97,10 @@ function App() {
 			<br />
 			<Tilt {...options}>
 				<div className="totally-centered">
-					<button className="count-button" onClick={() => setCount(c => c + 1)}>
+					<button
+						className="count-button"
+						onClick={() => setCount((c) => c + 1)}
+					>
 						{count}
 					</button>
 				</div>
